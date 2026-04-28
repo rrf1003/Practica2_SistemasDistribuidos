@@ -5,37 +5,40 @@ import com.sistemasdistr.basico.model.User;
 import com.sistemasdistr.basico.repository.RoleRepository;
 import com.sistemasdistr.basico.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-@Configuration
-public class DataInitializer {
+@Component
+public class DataInitializer implements CommandLineRunner {
 
-    @Bean
-    CommandLineRunner initDatabase(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
-        return args -> {
-            Role adminRole;
-            if (roleRepository.count() == 0) {
-                adminRole = new Role(null, "ROLE_ADMIN", 1);
-                adminRole = roleRepository.save(adminRole);
-            } else {
-                adminRole = roleRepository.findAll().get(0);
-            }
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    // Inyectamos el PasswordEncoder
+    public DataInitializer(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public void run(String[] args) throws Exception {
+        if (roleRepository.count() == 0) {
+            Role adminRole = new Role(null, "ROLE_ADMIN", 1);
+            roleRepository.save(adminRole);
 
             if (userRepository.findUserByUsername("admin") == null) {
-                User adminUser = new User();
-                adminUser.setUsername("admin");
-                adminUser.setPassword(passwordEncoder.encode("admin123"));
-                adminUser.setEmail("admin@ejemplo.com");
-                adminUser.setNombreUsuario("Administrador del Sistema");
-                adminUser.setFechaUltimoAcceso(LocalDateTime.now());
-                adminUser.setUserRole(adminRole);
-
-                userRepository.save(adminUser);
+                User admin = new User();
+                admin.setUsername("admin");
+                // AQUÍ ENCRIPTAMOS LA CONTRASEÑA "admin123"
+                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setUserRole(adminRole);
+                userRepository.save(admin);
+                System.out.println("✅ Usuario 'admin' creado con contraseña encriptada (BCrypt).");
             }
-        };
+        }
     }
 }
