@@ -33,7 +33,6 @@ public class DataInitializer implements CommandLineRunner {
             if (userRepository.findUserByUsername("admin") == null) {
                 User admin = new User();
                 admin.setUsername("admin");
-                // AQUÍ ENCRIPTAMOS LA CONTRASEÑA "admin123"
                 admin.setPassword(passwordEncoder.encode("admin123"));
                 admin.setUserRole(adminRole);
                 userRepository.save(admin);

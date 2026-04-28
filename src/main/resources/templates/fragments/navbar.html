@@ -1,0 +1,29 @@
+<!-- Archivo: src/main/resources/templates/fragments/navbar.html -->
+<nav th:fragment="menu-superior" class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">⚙️ AdminApp</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">🏠 Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/usuarios">👥 Usuarios</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/errores">🚨 Auditoría Errores</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/laboratorio">🧠 Lab IA</a>
+                </li>
+            </ul>
+            <!-- Botón de Cerrar Sesión securizado -->
+            <form th:action="@{/logout}" method="post" class="d-flex">
+                <button class="btn btn-outline-danger" type="submit">Cerrar Sesión</button>
+            </form>
+        </div>
+    </div>
+</nav>
