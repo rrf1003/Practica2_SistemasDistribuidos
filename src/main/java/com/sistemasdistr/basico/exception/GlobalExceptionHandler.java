@@ -1,49 +1,52 @@
 package com.sistemasdistr.basico.exception;
 
+import com.sistemasdistr.basico.model.ErrorLog;
+import com.sistemasdistr.basico.repository.ErrorLogRepository;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.ResourceAccessException;
-
 import java.sql.SQLException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    //1. Atrapa errores de Base de Datos (Ej: MySQL apagado o error de consulta)
+    // Inyectamos nuestro nuevo repositorio para poder guardar el error
+    private final ErrorLogRepository errorLogRepository;
+
+    public GlobalExceptionHandler(ErrorLogRepository errorLogRepository) {
+        this.errorLogRepository = errorLogRepository;
+    }
+
     @ExceptionHandler(SQLException.class)
-    public String handleDatabaseExceptions(SQLException ex, Model model){
-        model.addAttribute("tituloError", "Error de Base de Datos");
-        model.addAttribute("mensajeError", "Lo sentimos, hay un problema temporal conectando con la base de datos");
+    public String handleDatabaseExceptions(SQLException ex, Model model) {
+        // 1. Guardar en Base de Datos (CRUD)
+        ErrorLog log = new ErrorLog();
+        log.setTitulo("Fallo de Base de Datos");
+        log.setDetalle(ex.getMessage());
+        log.setTipoExcepcion("SQLException");
+        errorLogRepository.save(log); // ¡Guardado!
+
+        // 2. Mostrar al usuario
+        model.addAttribute("tituloError", "Error de Acceso a Datos");
+        model.addAttribute("mensajeError", "No se pudo conectar con la base de datos del sistema.");
         model.addAttribute("detalleTecnico", ex.getMessage());
         return "error-amigable";
     }
 
-    //2. Atrapa errores HTTP del API de Python (Ej: devuelve un 404 No Encontrado o 500 Error Interno)
     @ExceptionHandler(HttpClientErrorException.class)
-    public String handlePythonApiExceptions(HttpClientErrorException ex, Model model){
-        model.addAttribute("tituloError", "Error en el Servicio Externo");
-        model.addAttribute("mensajeError", "El servicio de Python ha devuelto un error al procesar la petición");
-        model.addAttribute("detalleTecnico", "Código HTTP: " + ex.getStatusCode() + " - " + ex.getStatusText());
-        return "error-amigable";
-    }
+    public String handlePythonApiExceptions(HttpClientErrorException ex, Model model) {
+        // 1. Guardar en Base de Datos (CRUD)
+        ErrorLog log = new ErrorLog();
+        log.setTitulo("Fallo de API Python");
+        log.setDetalle(ex.getMessage());
+        log.setTipoExcepcion("HttpClientErrorException");
+        errorLogRepository.save(log); // ¡Guardado!
 
-    //3. Atrapa errores de conexión (Ej: El servidor de Python está apagado)
-    @ExceptionHandler(ResourceAccessException.class)
-    public String handleConnectionExceptions(ResourceAccessException ex, Model model){
-        model.addAttribute("tituloError", "Servicio no Disponible");
-        model.addAttribute("mensajeError", "No hemos podido contactar con el API de Python. Verifica que esté en ejecución");
-        model.addAttribute("detalleTecnico", ex.getMessage());
-        return "error-amigable";
-    }
-
-    //4. Atrapa cualquier error genérico (Fallback)
-    @ExceptionHandler(Exception.class)
-    public String handleAllOtherExceptions(Exception ex, Model model){
-        model.addAttribute("tituloError", "Error Inesperado");
-        model.addAttribute("mensajeError", "Ha ocurrido un error inesperado en el sistema.");
-        model.addAttribute("detalleTecnico",  ex.getMessage());
+        // 2. Mostrar al usuario
+        model.addAttribute("tituloError", "Error en Servicio Externo");
+        model.addAttribute("mensajeError", "La API de Python ha respondido con un error.");
+        model.addAttribute("detalleTecnico", "Status: " + ex.getStatusCode());
         return "error-amigable";
     }
 }
