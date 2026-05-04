@@ -13,18 +13,12 @@ public class UserService {
     @Autowired
     public UserRepository repo;
 
-    @Autowired
-    private KeyService keyservice;
 
     public User register(String username, String password) throws Exception{
-
-        Map<String, String> keys = keyservice.generateKeyPair();
 
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
-        user.setPublickey(keys.get("public").getBytes());
-        user.setPrivateKey(keys.get("private").getBytes());
 
         return repo.save(user);
     }

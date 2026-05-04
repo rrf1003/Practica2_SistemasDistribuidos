@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-public class AdminCrudController {
+public class AdminCRUDController {
 
     private final UserRepository userRepository;
     private final ErrorLogRepository errorLogRepository;
 
-    public AdminCrudController(UserRepository userRepository, ErrorLogRepository errorLogRepository) {
+    public AdminCRUDController(UserRepository userRepository, ErrorLogRepository errorLogRepository) {
         this.userRepository = userRepository;
         this.errorLogRepository = errorLogRepository;
     }
@@ -27,7 +27,7 @@ public class AdminCrudController {
     }
 
     @PostMapping("/admin/usuarios/eliminar/{id}")
-    public String borrarUsuario(@PathVariable Long id) {
+    public String borrarUsuario(@PathVariable Integer id) {
         userRepository.deleteById(id);
         return "redirect:/admin/usuarios"; // Recarga la página tras borrar
     }
