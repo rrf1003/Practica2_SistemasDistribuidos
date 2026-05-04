@@ -7,8 +7,40 @@
 <body>
 <div th:replace="fragments/navbar :: menu-superior"></div>
 <div class="container">
-    <h2>Registro Histórico de Errores</h2>
-    <p>Aquí guardaremos los fallos de la API de Python capturados por nuestro ExceptionHandler.</p>
+    <h2 class="mb-4">Auditoría de Errores (Logs)</h2>
+
+    <div th:if="${#lists.isEmpty(listaErrores)}" class="alert alert-success">
+        ¡Todo va perfecto! No hay errores registrados en el sistema.
+    </div>
+
+    <div class="table-responsive" th:unless="${#lists.isEmpty(listaErrores)}">
+        <table class="table table-bordered table-sm">
+            <thead class="table-danger">
+            <tr>
+                <th>ID</th>
+                <th>Fecha y Hora</th>
+                <th>Título</th>
+                <th>Tipo Excepción</th>
+                <th>Detalle Técnico</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="error : ${listaErrores}">
+                <td th:text="${error.id}">1</td>
+                <td th:text="${#temporals.format(error.fechaHora, 'dd/MM/yyyy HH:mm')}">12/12/2026</td>
+                <td th:text="${error.titulo}">Fallo de BD</td>
+                <td><span class="badge bg-warning text-dark" th:text="${error.tipoExcepcion}">SQLException</span></td>
+                <td th:text="${error.detalle}">Connection refused...</td>
+                <td>
+                    <form th:action="@{/admin/errores/eliminar/{id}(id=${error.id})}" method="post">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Descartar</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 </body>
 </html>

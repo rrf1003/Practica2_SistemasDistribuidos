@@ -7,8 +7,37 @@
 <body>
 <div th:replace="fragments/navbar :: menu-superior"></div>
 <div class="container">
-    <h2>Gestión de Usuarios</h2>
-    <p>Aquí irá la tabla con el CRUD de usuarios (Crear, Leer, Actualizar, Borrar).</p>
+    <h2 class="mb-4">Gestión de Usuarios</h2>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover border">
+            <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nombre de Usuario</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Iteramos sobre la lista enviada por el controlador -->
+            <tr th:each="usuario : ${listaUsuarios}">
+                <td th:text="${usuario.id}">1</td>
+                <td th:text="${usuario.username}">Admin</td>
+                <td th:text="${usuario.userRole.name}">ROLE_ADMIN</td>
+                <td>
+                    <!-- Botón de Borrar (Evita que el admin se borre a sí mismo por error) -->
+                    <form th:if="${usuario.username != 'admin'}"
+                          th:action="@{/admin/usuarios/eliminar/{id}(id=${usuario.id})}"
+                          method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que quieres borrar este usuario?')">Borrar</button>
+                    </form>
+                    <span th:if="${usuario.username == 'admin'}" class="badge bg-secondary">Protegido</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 </body>
 </html>
