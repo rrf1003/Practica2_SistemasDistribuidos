@@ -62,7 +62,7 @@ public class RegistroController {
         Role rolUsuario = roleRepository.findByName("ROLE_USER");
         if (rolUsuario == null) {
             rolUsuario = new Role();
-            rolUsuario.setName("ROLE_USER");
+            rolUsuario.setRoleName("ROLE_USER");
             roleRepository.save(rolUsuario);
         }
         nuevoUsuario.setUserRole(rolUsuario);
