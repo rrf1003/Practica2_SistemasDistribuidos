@@ -17,13 +17,13 @@ services:
     ports:
       - "5000:5000"
 
-  app-java: # El nombre de tu contenedor Spring Boot
-    build: . # Le dice que use el Dockerfile de la raíz
-    container_name: ${APP_CONTAINER_NAME_DES} # Usa tu .env (basicoapp)
+  app-java:
+    build: .
+    container_name: ${APP_CONTAINER_NAME_DES}
     ports:
       - "${SPRING_LOCAL_PORT_DES}:${SPRING_DOCKER_PORT_DES}"
     depends_on:
-      - mysqldb # Asegura que MySQL arranque antes que Java
+      - mysqldb
     environment:
 
       SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/${MYSQLDB_DATABASE}
