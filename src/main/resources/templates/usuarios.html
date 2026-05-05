@@ -20,13 +20,12 @@
             </tr>
             </thead>
             <tbody>
-            <!-- Iteramos sobre la lista enviada por el controlador -->
+
             <tr th:each="usuario : ${listaUsuarios}">
                 <td th:text="${usuario.id}">1</td>
                 <td th:text="${usuario.username}">Admin</td>
-                <td th:text="${usuario.userRole.name}">ROLE_ADMIN</td>
+                <td th:text="${usuario.userRole?.roleName}">ROLE_ADMIN</td>
                 <td>
-                    <!-- Botón de Borrar (Evita que el admin se borre a sí mismo por error) -->
                     <form th:if="${usuario.username != 'admin'}"
                           th:action="@{/admin/usuarios/eliminar/{id}(id=${usuario.id})}"
                           method="post" class="d-inline">

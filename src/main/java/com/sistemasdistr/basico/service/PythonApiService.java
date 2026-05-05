@@ -17,21 +17,19 @@ public class PythonApiService {
         this.restTemplate = new RestTemplate();
     }
 
-    // 1. Llama al endpoint de Python que simula buscar un Pokemon
-    public String obtenerPokemon(String nombre){
-        String url = PYTHON_API_BASE_URL + "/api/pokemon/" + nombre;
-        // Si Python devuelve un 404 o 500, RestTemplate lanzará una HttpClientErrorException
-        // Si Python está apagado, lanzará una Resource AccessException
+    // Llama al endpoint de Python que simula buscar un Pokemon
+    public String obtenerPokemon(String nombre, String usuario){
+        String url = PYTHON_API_BASE_URL + "/api/pokemon/" + nombre + "?usuario=" + usuario;
         return restTemplate.getForObject(url, String.class);
     }
 
-    // 2. Llama al endpoint de Python que simula un error de lectura de archivos
+    // Llama al endpoint de Python que simula un error de lectura de archivos
     public String forzarErrorArchivo() {
         String url = PYTHON_API_BASE_URL + "/api/error-archivo";
         return restTemplate.getForObject(url, String.class);
     }
 
-    // 3. Llama al endpoint de Python que simula un fallo en su propia Base de Datos
+    // Llama al endpoint de Python que simula un fallo en su propia Base de Datos
     public String forzarErrorBaseDatos() {
         String url = PYTHON_API_BASE_URL + "/api/error-bd";
         return restTemplate.getForObject(url, String.class);

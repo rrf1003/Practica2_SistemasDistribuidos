@@ -14,20 +14,26 @@
     </div>
 
     <div class="alert alert-info shadow-sm">
-        Haz clic en los botones para invocar al API de Python. Cada botón forzará un tipo de excepción distinto para probar el manejador de errores de Spring Boot.
+        Interactúa con la API o haz clic en los botones para invocar errores en Python. Cada botón forzará un tipo de excepción distinto para probar el manejador de errores de Spring Boot.
     </div>
 
     <div class="row mt-4">
+
+        <!-- 1. TARJETA MODIFICADA: Ahora es un buscador interactivo -->
         <div class="col-md-4 mb-3">
             <div class="card border-primary h-100">
                 <div class="card-body text-center">
                     <h5 class="card-title text-primary">API de Pokémon</h5>
-                    <p class="card-text text-muted small">Busca un Pokémon que NO existe para forzar un error de terceros.</p>
-                    <a th:href="@{/api/test/pokemon}" class="btn btn-primary w-100">Forzar Error Pokémon</a>
+                    <p class="card-text text-muted small">Busca un Pokémon real (ej: ditto) o inventa uno para forzar un error.</p>
+                    <form th:action="@{/api/test/pokemon}" method="get">
+                        <input type="text" name="nombre" class="form-control mb-2" placeholder="Nombre del Pokémon..." required>
+                        <button type="submit" class="btn btn-primary w-100">Llamar a Python</button>
+                    </form>
                 </div>
             </div>
         </div>
 
+        <!-- 2. TARJETA DE ARCHIVO (Se queda igual, perfecta) -->
         <div class="col-md-4 mb-3">
             <div class="card border-warning h-100">
                 <div class="card-body text-center">
@@ -38,6 +44,7 @@
             </div>
         </div>
 
+        <!-- 3. TARJETA DE BD (Se queda igual, perfecta) -->
         <div class="col-md-4 mb-3">
             <div class="card border-danger h-100">
                 <div class="card-body text-center">
@@ -48,7 +55,36 @@
             </div>
         </div>
     </div>
+    <div th:if="${resultado}" class="card shadow mt-4 border-dark">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">🌐 Respuesta de la Red de Contenedores</h5>
+            <span class="badge bg-success">Datos Recibidos</span>
+        </div>
+
+        <div class="card-body bg-light" style="max-height: 400px; overflow: auto;">
+            <!-- Añadimos 'pb-4' para darle espacio extra abajo y que la barra no pise las letras -->
+            <pre class="m-0 pb-4"><code id="json-formateado" class="text-primary" th:text="${resultado}"></code></pre>
+        </div>
+    </div>
+
 </div>
+
+<script th:if="${resultado}">
+    document.addEventListener("DOMContentLoaded", function() {
+        const cajaTexto = document.getElementById("json-formateado");
+        if (cajaTexto) {
+            try {
+                // 1. Coge el texto apelotonado
+                const datosEnBruto = JSON.parse(cajaTexto.innerText);
+                // 2. Lo convierte en un JSON elegante con 4 espacios de sangría
+                cajaTexto.innerText = JSON.stringify(datosEnBruto, null, 4);
+            } catch (e) {
+                // Si la respuesta no es un JSON (por ejemplo, si pruebas el botón de error de archivo),
+                // lo deja como texto normal sin romper la página.
+            }
+        }
+    });
+</script>
 
 </body>
 </html>
