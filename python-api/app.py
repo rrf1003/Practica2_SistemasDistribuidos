@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import requests
 import mysql.connector
 import os # Añadimos esto para leer las variables de Docker

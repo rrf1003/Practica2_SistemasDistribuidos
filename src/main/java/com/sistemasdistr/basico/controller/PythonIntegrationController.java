@@ -1,19 +1,25 @@
 package com.sistemasdistr.basico.controller;
 
+import com.sistemasdistr.basico.model.RegistroBusqueda;
+import com.sistemasdistr.basico.repository.RegistroBusquedaRepository;
 import com.sistemasdistr.basico.service.PythonApiService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 public class PythonIntegrationController {
 
     private final PythonApiService pythonApiService;
 
-    public PythonIntegrationController(PythonApiService pythonApiService) {
+    private final RegistroBusquedaRepository busquedaRepository;
+
+    public PythonIntegrationController(PythonApiService pythonApiService, RegistroBusquedaRepository busquedaRepository) {
         this.pythonApiService = pythonApiService;
+        this.busquedaRepository = busquedaRepository;
     }
 
     // Ruta para mostrar la pantalla
@@ -59,5 +65,13 @@ public class PythonIntegrationController {
             model.addAttribute("resultado", "Error al conectar con Python: " + e.getMessage());
         }
         return "api-test";
+    }
+
+    @GetMapping("/historial")
+    public String verHistorial(Model model) {
+        // Obtenemos todos los registros de la base de datos
+        List<RegistroBusqueda> busquedas = busquedaRepository.findAll();
+        model.addAttribute("busquedas", busquedas);
+        return "historial"; // Llamará a historial.html
     }
 }
