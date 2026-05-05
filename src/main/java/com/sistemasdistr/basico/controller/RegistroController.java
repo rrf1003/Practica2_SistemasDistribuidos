@@ -59,7 +59,7 @@ public class RegistroController {
         nuevoUsuario.setPassword(passwordEncoder.encode(password));
 
         // Le asignamos el rol básico de usuario
-        Role rolUsuario = roleRepository.findByName("ROLE_USER");
+        Role rolUsuario = roleRepository.findByRoleName("ROLE_USER");
         if (rolUsuario == null) {
             rolUsuario = new Role();
             rolUsuario.setRoleName("ROLE_USER");
